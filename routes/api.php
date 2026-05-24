@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\LombaController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\BookmarkController;
 use App\Http\Controllers\Api\NotifikasiController;
+use App\Http\Controllers\ArtikelController;
 
 // Test route
 Route::get('/test', function () {
@@ -32,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifikasi',           [NotifikasiController::class, 'index']);
     Route::post('/notifikasi/baca-semua', [NotifikasiController::class, 'bacaSemua']);
     Route::post('/notifikasi/{id}/baca',  [NotifikasiController::class, 'baca']);
+    Route::apiResource('artikels', ArtikelController::class);
 });
 
 // Admin routes (butuh login + role admin)
