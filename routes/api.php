@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LombaController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\BookmarkController;
+use App\Http\Controllers\Api\NotifikasiController;
+use App\Http\Controllers\ArtikelController;
 
 // Test route
 Route::get('/test', function () {
