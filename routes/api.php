@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LombaController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\BookmarkController;
+use App\Http\Controllers\Api\ArtikelController;
 
 // Test route
 Route::get('/test', function () {
@@ -18,6 +19,8 @@ Route::post('/login',    [AuthController::class, 'login']);
 // Lomba public routes (tidak perlu login)
 Route::get('/lombas',      [LombaController::class, 'index']);
 Route::get('/lombas/{id}', [LombaController::class, 'show']);
+// Artikel public routes
+Route::apiResource('artikels', ArtikelController::class);
 
 // Protected routes (butuh token)
 Route::middleware('auth:sanctum')->group(function () {
