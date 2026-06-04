@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LombaController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\BookmarkController;
+use App\Http\Controllers\Api\LombaRequestController;
 
 // Test route
 Route::get('/test', function () {
@@ -25,15 +26,25 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me',               [AuthController::class, 'me']);
     Route::put('/profile',          [AuthController::class, 'updateProfile']);
     Route::put('/profile/password', [AuthController::class, 'updatePassword']);
-    Route::get('/bookmarks',              [BookmarkController::class, 'index']);
-    Route::post('/bookmarks/{lomba_id}',  [BookmarkController::class, 'toggle']);
-    Route::get('/bookmarks/{lomba_id}',   [BookmarkController::class, 'check']);
+
+    Route::get('/bookmarks',             [BookmarkController::class, 'index']);
+    Route::post('/bookmarks/{lomba_id}', [BookmarkController::class, 'toggle']);
+    Route::get('/bookmarks/{lomba_id}',  [BookmarkController::class, 'check']);
+
+    // User: kirim & lihat request lomba
+    Route::post('/lomba-requests',         [LombaRequestController::class, 'store']);
+    Route::get('/lomba-requests/milik-saya', [LombaRequestController::class, 'milikSaya']);
 });
 
 // Admin routes (butuh login + role admin)
 Route::middleware(['auth:sanctum', 'isAdmin'])->prefix('admin')->group(function () {
-    Route::get('/lombas',         [AdminController::class, 'index']);
-    Route::post('/lombas',        [AdminController::class, 'store']);
-    Route::put('/lombas/{id}',    [AdminController::class, 'update']);
-    Route::delete('/lombas/{id}', [AdminController::class, 'destroy']);
+    Route::get('/lombas',          [AdminController::class, 'index']);
+    Route::post('/lombas',         [AdminController::class, 'store']);
+    Route::post('/lombas/{id}',    [AdminController::class, 'update']);
+    Route::delete('/lombas/{id}',  [AdminController::class, 'destroy']);
+
+    // Admin: kelola request lomba dari user
+    Route::get('/lomba-requests',              [LombaRequestController::class, 'adminIndex']);
+    Route::post('/lomba-requests/{id}/approve', [LombaRequestController::class, 'approve']);
+    Route::post('/lomba-requests/{id}/reject',  [LombaRequestController::class, 'reject']);
 });
