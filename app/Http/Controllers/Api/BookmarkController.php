@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bookmark;
+use App\Models\Notifikasi;
+use App\Models\Lomba;
 use Illuminate\Http\Request;
 
 class BookmarkController extends Controller
 {
-    // Ambil semua bookmark user
     public function index(Request $request)
     {
         $bookmarks = Bookmark::where('user_id', $request->user()->id)
@@ -22,7 +23,6 @@ class BookmarkController extends Controller
         ]);
     }
 
-    // Toggle bookmark (tambah/hapus)
     public function toggle(Request $request, $lomba_id)
     {
         $user = $request->user();
@@ -43,6 +43,23 @@ class BookmarkController extends Controller
                 'user_id'  => $user->id,
                 'lomba_id' => $lomba_id,
             ]);
+
+            // Buat notifikasi deadline jika lomba punya deadline
+            $lomba = Lomba::find($lomba_id);
+            if ($lomba && $lomba->deadline) {
+                $tanggal = \Carbon\Carbon::parse($lomba->deadline)
+                    ->locale('id')
+                    ->translatedFormat('d F Y');
+
+                Notifikasi::create([
+                    'user_id' => $user->id,
+                    'judul'   => '⏰ Deadline: ' . $lomba->nama,
+                    'pesan'   => 'Lomba "' . $lomba->nama . '" yang kamu bookmark memiliki deadline pada ' . $tanggal . '. Cek jadwalnya di Kalender!',
+                    'tipe'    => 'deadline',
+                    'dibaca'  => false,
+                ]);
+            }
+
             return response()->json([
                 'status'     => 'success',
                 'bookmarked' => true,
@@ -51,7 +68,6 @@ class BookmarkController extends Controller
         }
     }
 
-    // Cek apakah lomba sudah dibookmark
     public function check(Request $request, $lomba_id)
     {
         $bookmarked = Bookmark::where('user_id', $request->user()->id)
